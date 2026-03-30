@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Muhammad Saad Mansoor — Mechanical Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:      #0a0a0a;
+      --surface: #111111;
+      --border:  #1f1f1f;
+      --text:    #e8e4dc;
+      --muted:   #6b6560;
+      --accent:  #c9a96e;
+      --white:   #f5f2ec;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.6;
+      cursor: none;
+    }
+
+    /* CURSOR */
+    .cursor {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(201,169,110,0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transition: width 0.3s, height 0.3s, border-color 0.3s, transform 0.35s ease;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 4rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(10,10,10,0.93);
+      backdrop-filter: blur(14px);
+      border-color: var(--border);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 4rem 5rem; position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 40%, rgba(74,127,165,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,169,110,0.06) 0%, transparent 70%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-name {
+      font-family: 'Syne', sans-serif; font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 800; line-height: 0.9; letter-spacing: -0.02em; color: var(--white);
+      opacity: 0; transform: translateY(30px);
+      animation: fadeUp 0.9s 0.35s forwards;
+    }
+    .hero-name em {
+      font-style: italic; font-family: 'Cormorant Garamond', serif;
+      font-weight: 300; color: var(--accent); display: block;
+    }
+    .hero-desc {
+      max-width: 540px; margin-top: 2rem; font-size: 1.05rem;
+      font-weight: 300; color: var(--muted);
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp 0.9s 0.55s forwards;
+    }
+    .hero-cta {
+      margin-top: 3rem; display: flex; gap: 1.5rem; align-items: center;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp 0.9s 0.7s forwards;
+    }
+    .btn-primary {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--bg); background: var(--accent); border: none;
+      padding: 0.85rem 2rem; text-decoration: none; display: inline-block;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--white); transform: translateY(-2px); }
+    .btn-ghost {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      border-bottom: 1px solid var(--border); padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--accent); border-color: var(--accent); }
+    .hero-scroll {
+      position: absolute; right: 4rem; bottom: 5rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+      writing-mode: vertical-rl;
+      opacity: 0; animation: fadeUp 1s 1.1s forwards;
+    }
+    .hero-scroll::after {
+      content: ''; width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollLine 2s 1.5s infinite;
+    }
+    @keyframes scrollLine {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* SECTIONS */
+    section { padding: 7rem 4rem; }
+    .section-label {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 3rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .section-label::before { content: ''; width: 40px; height: 1px; background: var(--accent); }
+
+    /* ABOUT */
+    #about {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+      border-top: 1px solid var(--border);
+    }
+    .about-title {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 700; line-height: 1.05; color: var(--white); margin-bottom: 2rem;
+    }
+    .about-title em {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-weight: 300; color: var(--accent);
+    }
+    .about-body { font-size: 1.05rem; font-weight: 300; color: var(--muted); line-height: 1.85; max-width: 480px; }
+    .about-body + .about-body { margin-top: 1.2rem; }
+    .about-right { padding-top: 5rem; }
+    .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .skill-item {
+      padding: 1.5rem; border: 1px solid var(--border); margin: -1px 0 0 -1px;
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .skill-item:hover { background: var(--surface); border-color: var(--accent); }
+    .skill-name {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); margin-bottom: 0.35rem;
+    }
+    .skill-sub { font-size: 0.85rem; color: var(--muted); font-weight: 300; }
+
+    /* EXPERIENCE */
+    #experience { border-top: 1px solid var(--border); }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 700; color: var(--white); margin-bottom: 3.5rem;
+    }
+    .exp-list { display: flex; flex-direction: column; }
+    .exp-item {
+      display: grid; grid-template-columns: 200px 1fr 140px;
+      gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid var(--border);
+      align-items: start; transition: background 0.2s;
+    }
+    .exp-item:hover { background: rgba(255,255,255,0.015); }
+    .exp-date {
+      font-family: 'DM Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; color: var(--muted); padding-top: 0.2rem; line-height: 1.6;
+    }
+    .exp-role {
+      font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+      color: var(--white); margin-bottom: 0.25rem;
+    }
+    .exp-company { font-size: 0.95rem; color: var(--accent); font-weight: 300; margin-bottom: 0.6rem; }
+    .exp-desc { font-size: 0.92rem; color: var(--muted); font-weight: 300; line-height: 1.7; }
+    .exp-skills {
+      margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.4rem;
+    }
+    .exp-skill-tag {
+      font-family: 'DM Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--border); padding: 0.2rem 0.55rem;
+    }
+    .exp-badge {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem; display: inline-block;
+      align-self: start; justify-self: end;
+    }
+    .exp-badge.current {
+      color: var(--accent); border-color: rgba(201,169,110,0.4);
+      background: rgba(201,169,110,0.06);
+    }
+
+    /* EDUCATION */
+    #education { border-top: 1px solid var(--border); }
+    .edu-item {
+      display: grid; grid-template-columns: 200px 1fr;
+      gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid var(--border);
+    }
+    .edu-degree {
+      font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 0.25rem;
+    }
+    .edu-school { font-size: 0.95rem; color: var(--accent); font-weight: 300; margin-bottom: 0.4rem; }
+    .edu-detail { font-size: 0.88rem; color: var(--muted); font-weight: 300; }
+
+    /* PROJECTS */
+    #projects { border-top: 1px solid var(--border); padding-bottom: 2rem; }
+    .projects-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; }
+
+    /* Full-width single project layout */
+    .project-feature {
+      margin-bottom: 2px;
+      position: relative; overflow: hidden; background: var(--surface);
+    }
+    .project-feature-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 420px;
+    }
+    .project-feature-inner.reverse { direction: rtl; }
+    .project-feature-inner.reverse > * { direction: ltr; }
+    .project-img-wrap {
+      position: relative; overflow: hidden;
+      background: #0d0d0d;
+    }
+    .project-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(35%) brightness(0.65);
+      transition: filter 0.6s ease, transform 0.6s ease; display: block;
+    }
+    .project-feature:hover .project-img-wrap img {
+      filter: grayscale(10%) brightness(0.8); transform: scale(1.04);
+    }
+
+    /* Multi-image: show 3 stacked photos */
+    .project-imgs-triple {
+      display: grid; grid-template-rows: 1fr 1fr 1fr; height: 100%;
+    }
+    .project-imgs-triple .project-img-wrap { border-bottom: 2px solid var(--bg); }
+    .project-imgs-triple .project-img-wrap:last-child { border-bottom: none; }
+
+    .project-info {
+      padding: 3.5rem; display: flex; flex-direction: column; justify-content: center;
+    }
+    .project-num {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.18em; color: rgba(201,169,110,0.5);
+      margin-bottom: 1.2rem;
+    }
+    .project-info-name {
+      font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800;
+      line-height: 1.0; color: var(--white); margin-bottom: 1rem;
+    }
+    .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .project-tag {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid rgba(201,169,110,0.3); padding: 0.2rem 0.6rem;
+    }
+    .project-what, .project-how, .project-result {
+      margin-bottom: 1rem;
+    }
+    .project-sub-label {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .project-sub-text {
+      font-size: 0.92rem; color: var(--muted); font-weight: 300; line-height: 1.7;
+    }
+    .project-sub-text li { margin-left: 1.1rem; margin-bottom: 0.2rem; }
+
+    /* No-image project card */
+    .project-noimg .project-info {
+      border: 1px solid var(--border); min-height: 280px;
+      position: relative; overflow: hidden;
+    }
+    .project-noimg .project-info::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        45deg, var(--border) 0, var(--border) 1px, transparent 0, transparent 50%
+      ); background-size: 20px 20px; opacity: 0.35;
+    }
+    .project-noimg .project-info > * { position: relative; }
+
+    /* CONTACT */
+    #contact {
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+    }
+    .contact-title {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 800; line-height: 0.95; color: var(--white); margin-bottom: 1.5rem;
+    }
+    .contact-title em {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-weight: 300; color: var(--accent); display: block;
+    }
+    .contact-body { font-size: 1rem; font-weight: 300; color: var(--muted); line-height: 1.8; }
+    .contact-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.75rem 0; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: var(--text); transition: color 0.2s;
+    }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link-label {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem;
+    }
+    .contact-link-value { font-size: 1.05rem; font-weight: 400; }
+    .contact-arrow { font-size: 1.2rem; color: var(--muted); transition: color 0.2s, transform 0.2s; }
+    .contact-link:hover .contact-arrow { color: var(--accent); transform: translate(4px, -4px); }
+
+    /* FOOTER */
+    footer {
+      padding: 2.5rem 4rem; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; color: var(--muted);
+    }
+    .footer-back {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .footer-back:hover { color: var(--accent); }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1000px) {
+      .project-feature-inner { grid-template-columns: 1fr; min-height: unset; }
+      .project-img-wrap { height: 280px; }
+      .project-imgs-triple { grid-template-rows: unset; grid-template-columns: 1fr 1fr 1fr; height: 200px; }
+    }
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      .hero, section, footer { padding-left: 2rem; padding-right: 2rem; }
+      .hero { padding-bottom: 4rem; }
+      #about { grid-template-columns: 1fr; gap: 3rem; }
+      .about-right { padding-top: 0; }
+      .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+      .exp-badge { justify-self: start; }
+      .edu-item { grid-template-columns: 1fr; gap: 0.5rem; }
+      #contact { grid-template-columns: 1fr; gap: 3rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .hero-scroll, .nav-links { display: none; }
+      .project-info { padding: 2rem; }
+    }
+    @media (max-width: 600px) {
+      .skills-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav id="navbar">
+    <a href="#" class="nav-logo">MSM</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-eyebrow">Junior Mechanical Engineer &nbsp;&bull;&nbsp; Lahore, Pakistan</div>
+    <h1 class="hero-name">
+      Muhammad
+      <em>Saad Mansoor</em>
+    </h1>
+    <p class="hero-desc">
+      Mechanical engineer specialising in HVAC systems, MEP estimation,
+      and electric vehicle development. Currently at Carbon Energies,
+      bridging precision engineering with innovative problem-solving.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="#contact" class="btn-ghost">Get in Touch &rarr;</a>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-left reveal">
+      <div class="section-label">About</div>
+      <h2 class="about-title">
+        Engineering with<br>
+        <em>Purpose &amp; Precision</em>
+      </h2>
+      <p class="about-body">
+        A dedicated mechanical engineer with a background spanning MEP estimation,
+        HVAC systems, and applied electric vehicle engineering. With experience
+        across Carbon Energies, AESOM, and Orient Electronics, I have prepared
+        over 500 MEP estimation schedules, mastered PlanSwift for HVAC takeoffs,
+        and led multi-motor electric vehicle development projects.
+      </p>
+      <p class="about-body">
+        Passionate about continuous learning and translating engineering
+        knowledge into practical, high-impact solutions.
+      </p>
+    </div>
+    <div class="about-right reveal" style="transition-delay:0.15s">
+      <div class="section-label">Core Skills</div>
+      <div class="skills-grid">
+        <div class="skill-item">
+          <div class="skill-name">AutoCAD</div>
+          <div class="skill-sub">2D Drafting &amp; Design</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Navisworks</div>
+          <div class="skill-sub">Clash Detection</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">PlanSwift</div>
+          <div class="skill-sub">HVAC Takeoffs</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">SolidWorks</div>
+          <div class="skill-sub">3D Modelling</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">MEP Estimation</div>
+          <div class="skill-sub">500+ Schedules</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">BLDC Motors</div>
+          <div class="skill-sub">EV Development</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Procurement</div>
+          <div class="skill-sub">Project Management</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Microsoft Excel</div>
+          <div class="skill-sub">Data &amp; Reporting</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-label reveal">Experience</div>
+    <h2 class="section-title reveal">Professional History</h2>
+    <div class="exp-list">
+
+      <div class="exp-item reveal">
+        <div class="exp-date">
+          Jan 2026 &mdash; Present<br>
+          <span style="opacity:0.5; font-size:0.65rem;">3 mos</span>
+        </div>
+        <div>
+          <div class="exp-role">Junior Mechanical Engineer</div>
+          <div class="exp-company">Carbon Energies &mdash; Full-time</div>
+          <div class="exp-desc">Lahore, Punjab, Pakistan &bull; On-site</div>
+          <div class="exp-skills">
+            <span class="exp-skill-tag">AutoCAD</span>
+            <span class="exp-skill-tag">Navisworks</span>
+            <span class="exp-skill-tag">+6 skills</span>
+          </div>
+        </div>
+        <div class="exp-badge current">Current</div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">
+          Nov 2025 &mdash; Jan 2026<br>
+          <span style="opacity:0.5; font-size:0.65rem;">3 mos</span>
+        </div>
+        <div>
+          <div class="exp-role">Mechanical Engineering Intern</div>
+          <div class="exp-company">Carbon Energies &mdash; Internship</div>
+          <div class="exp-desc">Lahore, Punjab, Pakistan &bull; On-site</div>
+          <div class="exp-skills">
+            <span class="exp-skill-tag">AutoCAD</span>
+            <span class="exp-skill-tag">Navisworks</span>
+            <span class="exp-skill-tag">+3 skills</span>
+          </div>
+        </div>
+        <div class="exp-badge">Internship</div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">
+          Mar 2025 &mdash; Oct 2025<br>
+          <span style="opacity:0.5; font-size:0.65rem;">8 mos</span>
+        </div>
+        <div>
+          <div class="exp-role">Team Lead</div>
+          <div class="exp-company">AESOM &mdash; Full-time</div>
+          <div class="exp-desc">Led the estimation team, overseeing project delivery and team coordination.</div>
+          <div class="exp-skills">
+            <span class="exp-skill-tag">Procurement</span>
+            <span class="exp-skill-tag">Project Management</span>
+            <span class="exp-skill-tag">+2 skills</span>
+          </div>
+        </div>
+        <div class="exp-badge">Full-time</div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">
+          Oct 2024 &mdash; Oct 2025<br>
+          <span style="opacity:0.5; font-size:0.65rem;">1 yr 1 mo</span>
+        </div>
+        <div>
+          <div class="exp-role">Mechanical / Plumbing Estimator</div>
+          <div class="exp-company">AESOM &mdash; Full-time</div>
+          <div class="exp-desc">Lahore, Punjab, Pakistan &bull; On-site. Prepared MEP estimation schedules, mastered PlanSwift for HVAC quantity takeoffs, and provided critical support for plumbing takeoff counts across multiple large-scale projects.</div>
+          <div class="exp-skills">
+            <span class="exp-skill-tag">PlanSwift</span>
+            <span class="exp-skill-tag">Microsoft Excel</span>
+            <span class="exp-skill-tag">+1 skill</span>
+          </div>
+        </div>
+        <div class="exp-badge">Full-time</div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">
+          Nov 2023 &mdash; May 2024<br>
+          <span style="opacity:0.5; font-size:0.65rem;">7 mos</span>
+        </div>
+        <div>
+          <div class="exp-role">Junior Associate</div>
+          <div class="exp-company">AESOM &mdash; Internship</div>
+          <div class="exp-desc">Lahore, Punjab, Pakistan &bull; On-site. Started part-time while completing my Bachelor's in Mechanical Engineering, gaining hands-on exposure to MEP workflows.</div>
+          <div class="exp-skills">
+            <span class="exp-skill-tag">MEP</span>
+            <span class="exp-skill-tag">Microsoft Excel</span>
+            <span class="exp-skill-tag">+6 skills</span>
+          </div>
+        </div>
+        <div class="exp-badge">Internship</div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-date">
+          Jul 2023 &mdash; Sep 2023<br>
+          <span style="opacity:0.5; font-size:0.65rem;">3 mos</span>
+        </div>
+        <div>
+          <div class="exp-role">Summer Intern</div>
+          <div class="exp-company">Orient Electronics &mdash; Internship</div>
+          <div class="exp-desc">Lahore, Punjab, Pakistan &bull; On-site. Observational internship following completion of my 3rd year. Gained insight into corporate engineering operations and HVAC system practices.</div>
+          <div class="exp-skills">
+            <span class="exp-skill-tag">Project Coordination</span>
+            <span class="exp-skill-tag">Microsoft Word</span>
+            <span class="exp-skill-tag">+1 skill</span>
+          </div>
+        </div>
+        <div class="exp-badge">Internship</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-label reveal">Education</div>
+    <h2 class="section-title reveal">Academic Background</h2>
+    <div class="exp-list">
+      <div class="edu-item reveal">
+        <div class="exp-date">2020 &mdash; 2024</div>
+        <div>
+          <div class="edu-degree">Bachelor of Mechanical Engineering</div>
+          <div class="edu-school">The University of Lahore</div>
+          <div class="edu-detail">CGPA: 3.0</div>
+          <div class="exp-skills" style="margin-top:0.6rem;">
+            <span class="exp-skill-tag">Microsoft Word</span>
+            <span class="exp-skill-tag">Project Management</span>
+            <span class="exp-skill-tag">+4 skills</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="projects-header reveal">
+      <h2 class="section-title" style="margin-bottom:0">Selected Projects</h2>
+    </div>
+
+    <!-- Shock Absorber -->
+    <div class="project-feature reveal">
+      <div class="project-feature-inner">
+        <div class="project-imgs-triple">
+          <div class="project-img-wrap">
+            <img src="images/shock_absorber11jpg.jpg" alt="Shock Absorber - Overview"/>
+          </div>
+          <div class="project-img-wrap">
+            <img src="images/shock_absorber22.jpg" alt="Shock Absorber - Assembly"/>
+          </div>
+          <div class="project-img-wrap">
+            <img src="images/shock_absorber33.jpg" alt="Shock Absorber - Result"/>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="project-num">01 / 03</div>
+          <div class="project-tags">
+            <span class="project-tag">SolidWorks</span>
+            <span class="project-tag">Arc Welding</span>
+            <span class="project-tag">DFA</span>
+          </div>
+          <div class="project-info-name">Shock Absorber<br>Model</div>
+          <div class="project-what">
+            <div class="project-sub-label">What</div>
+            <div class="project-sub-text">Miniature vehicle model fitted with leaf spring suspension to test vibrations under load and study their behaviour.</div>
+          </div>
+          <div class="project-how">
+            <div class="project-sub-label">How</div>
+            <ul class="project-sub-text">
+              <li>Designed in SolidWorks</li>
+              <li>Joined structure via arc welding</li>
+              <li>Applied DFA principles to reduce product cost</li>
+            </ul>
+          </div>
+          <div class="project-result">
+            <div class="project-sub-label">Result</div>
+            <div class="project-sub-text">Model created successfully. Vibration data collected and studied under varying load conditions.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Follower Robot -->
+    <div class="project-feature reveal" style="transition-delay:0.1s">
+      <div class="project-feature-inner reverse">
+        <div class="project-imgs-triple">
+          <div class="project-img-wrap">
+            <img src="images/line follower11.png" alt="Line Follower - Design"/>
+          </div>
+          <div class="project-img-wrap">
+            <img src="images/line follower22.png" alt="Line Follower - Final"/>
+          </div>
+          <div class="project-img-wrap" style="background:#0d0d0d; display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.15em; color:var(--muted); text-transform:uppercase;">Sensor Array</span>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="project-num">02 / 03</div>
+          <div class="project-tags">
+            <span class="project-tag">Robotics</span>
+            <span class="project-tag">SolidWorks</span>
+            <span class="project-tag">Sensors</span>
+          </div>
+          <div class="project-info-name">Line Follower<br>Robot</div>
+          <div class="project-what">
+            <div class="project-sub-label">What</div>
+            <div class="project-sub-text">A low-cost, lightweight autonomous vehicle that uses infrared sensors to track and follow a line.</div>
+          </div>
+          <div class="project-how">
+            <div class="project-sub-label">How</div>
+            <ul class="project-sub-text">
+              <li>Outer box designed in SolidWorks</li>
+              <li>Contacted manufacturers to fabricate the model</li>
+            </ul>
+          </div>
+          <div class="project-result">
+            <div class="project-sub-label">Result</div>
+            <ul class="project-sub-text">
+              <li>Final product included minor design modifications</li>
+              <li>Proper functioning on line confirmed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Injection Molding -->
+    <div class="project-feature reveal" style="transition-delay:0.2s">
+      <div class="project-feature-inner">
+        <div class="project-imgs-triple">
+          <div class="project-img-wrap">
+            <img src="images/injection_molding1.png" alt="Injection Molding 1"/>
+          </div>
+          <div class="project-img-wrap">
+            <img src="images/injection_molding2.png" alt="Injection Molding 2"/>
+          </div>
+          <div class="project-img-wrap">
+            <img src="images/injection_molding3.jpg" alt="Injection Molding 3"/>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="project-num">03 / 03</div>
+          <div class="project-tags">
+            <span class="project-tag">Manufacturing</span>
+            <span class="project-tag">SolidWorks</span>
+            <span class="project-tag">Process Design</span>
+          </div>
+          <div class="project-info-name">Injection Moulding<br>Study</div>
+          <div class="project-what">
+            <div class="project-sub-label">What</div>
+            <div class="project-sub-text">A study and modelling exercise focused on the injection moulding manufacturing process, covering design considerations and process parameters.</div>
+          </div>
+          <div class="project-how">
+            <div class="project-sub-label">How</div>
+            <ul class="project-sub-text">
+              <li>Modelled components in SolidWorks</li>
+              <li>Analysed process parameters for material flow</li>
+            </ul>
+          </div>
+          <div class="project-result">
+            <div class="project-sub-label">Result</div>
+            <div class="project-sub-text">Comprehensive understanding of mould design and production constraints for polymer components.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-left reveal">
+      <div class="section-label">Contact</div>
+      <h2 class="contact-title">
+        Let&rsquo;s Work
+        <em>Together</em>
+      </h2>
+      <p class="contact-body">
+        Open to new opportunities, collaborations, and interesting
+        engineering challenges. Feel free to reach out through any
+        of the channels below.
+      </p>
+    </div>
+    <div class="reveal" style="transition-delay:0.15s">
+      <a href="mailto:saadmansoor257@gmail.com" class="contact-link">
+        <div>
+          <div class="contact-link-label">Email</div>
+          <div class="contact-link-value">saadmansoor257@gmail.com</div>
+        </div>
+        <div class="contact-arrow">&#8599;</div>
+      </a>
+      <a href="tel:03360041089" class="contact-link">
+        <div>
+          <div class="contact-link-label">Phone</div>
+          <div class="contact-link-value">0336 004 1089</div>
+        </div>
+        <div class="contact-arrow">&#8599;</div>
+      </a>
+      <a href="tel:03134831336" class="contact-link">
+        <div>
+          <div class="contact-link-label">Alt. Phone</div>
+          <div class="contact-link-value">0313 483 1336</div>
+        </div>
+        <div class="contact-arrow">&#8599;</div>
+      </a>
+      <a href="https://www.linkedin.com/in/muhammad-saad-mansoor-a9750a229/" target="_blank" class="contact-link">
+        <div>
+          <div class="contact-link-label">LinkedIn</div>
+          <div class="contact-link-value">Muhammad Saad Mansoor</div>
+        </div>
+        <div class="contact-arrow">&#8599;</div>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-copy">&copy; 2025 Muhammad Saad Mansoor &mdash; All rights reserved</div>
+    <a href="#hero" class="footer-back">Back to top &uarr;</a>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function tick() {
+      cursor.style.transform = `translate(${mx-4}px,${my-4}px)`;
+      rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+      ring.style.transform = `translate(${rx-16}px,${ry-16}px)`;
+      requestAnimationFrame(tick);
+    })();
+    document.querySelectorAll('a,button').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='var(--accent)'; });
+      el.addEventListener('mouseleave', () => { ring.style.width='32px'; ring.style.height='32px'; ring.style.borderColor='rgba(201,169,110,0.4)'; });
+    });
+
+    // Sticky nav
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', scrollY > 60));
+
+    // Scroll reveals
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(r => observer.observe(r));
+  </script>
+</body>
+</html>
